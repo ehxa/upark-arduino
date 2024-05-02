@@ -1,113 +1,89 @@
-/*
-  This example connects to an unencrypted WiFi network.
-  Then it prints the MAC address of the WiFi module,
-  the IP address obtained, and other network details.
+#include "ArduinoGraphics.h"
+#include "Arduino_LED_Matrix.h"
 
-  created 13 July 2010
-  by dlf (Metodo2 srl)
-  modified 31 May 2012
-  by Tom Igoe
+ArduinoLEDMatrix matrix;
 
-  Find the full UNO R4 WiFi Network documentation here:
-  https://docs.arduino.cc/tutorials/uno-r4-wifi/wifi-examples#connect-with-wpa
- */
-#include <WiFiS3.h>
-
-#include "arduino_secrets.h" 
-///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-char ssid[] = SECRET_SSID;        // your network SSID (name)
-char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
-int status = WL_IDLE_STATUS;     // the WiFi radio's status
+int cm0 = 0, cm1 = 0, cm2 = 0, cm3 = 0;
+const int triggerPin0 = 12, echoPin0 = 13;   
+const int triggerPin1 = 8, echoPin1 = 9;  
+const int triggerPin2 = 6, echoPin2 = 7; 
+const int triggerPin3 = 3, echoPin3 = 4; 
 
 void setup() {
-  //Initialize serial and wait for port to open:
   Serial.begin(9600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
+  pinMode(triggerPin0, OUTPUT);
+  pinMode(echoPin0, INPUT);
+  pinMode(triggerPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
+  pinMode(triggerPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+  pinMode(triggerPin3, OUTPUT);
+  pinMode(echoPin3, INPUT);
 
-  // check for the WiFi module:
-  if (WiFi.status() == WL_NO_MODULE) {
-    Serial.println("Communication with WiFi module failed!");
-    // don't continue
-    while (true);
-  }
+  matrix.begin();
+  matrix.textScrollSpeed(50);
+  matrix.textFont(Font_5x7);
+}
 
-  String fv = WiFi.firmwareVersion();
-  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
-    Serial.println("Please upgrade the firmware");
-  }
+long readUltrasonicDistance(int triggerpin, int echopin) {
+  digitalWrite(triggerpin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerpin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerpin, LOW);
+  return pulseIn(echopin, HIGH);
+}
 
-  // attempt to connect to WiFi network:
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to WPA SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network:
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
-
-  // you're connected now, so print out the data:
-  Serial.print("You're connected to the network");
-  printCurrentNet();
-  printWifiData();
-
+void displayMessage(const char* text) {
+  matrix.beginDraw();
+  matrix.beginText(0, 1, 0xFFFFFF);
+  matrix.println(text);
+  matrix.endText(SCROLL_LEFT);
+  matrix.endDraw();
 }
 
 void loop() {
-  // check the network connection once every 10 seconds:
-  delay(10000);
-  printCurrentNet();
-}
+  cm0 = 0.01715 * readUltrasonicDistance(triggerPin0, echoPin0);
+  cm1 = 0.01715 * readUltrasonicDistance(triggerPin1, echoPin1);
+  cm2 = 0.01715 * readUltrasonicDistance(triggerPin2, echoPin2);
+  cm3 = 0.01715 * readUltrasonicDistance(triggerPin3, echoPin3);
 
-void printWifiData() {
-  // print your board's IP address:
-  IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  
-  Serial.println(ip);
+  Serial.print("Distance Sensor 0: ");
+  Serial.print(cm0);
+  Serial.println(" cm");
+  Serial.print("Distance Sensor 1: ");
+  Serial.print(cm1);
+  Serial.println(" cm");
+  Serial.print("Distance Sensor 2: ");
+  Serial.print(cm2);
+  Serial.println(" cm");
+  Serial.print("Distance Sensor 3: ");
+  Serial.print(cm3);
+  Serial.println(" cm");
 
-  // print your MAC address:
-  byte mac[6];
-  WiFi.macAddress(mac);
-  Serial.print("MAC address: ");
-  printMacAddress(mac);
-}
-
-void printCurrentNet() {
-  // print the SSID of the network you're attached to:
-  Serial.print("SSID: ");
-  Serial.println(WiFi.SSID());
-
-  // print the MAC address of the router you're attached to:
-  byte bssid[6];
-  WiFi.BSSID(bssid);
-  Serial.print("BSSID: ");
-  printMacAddress(bssid);
-
-  // print the received signal strength:
-  long rssi = WiFi.RSSI();
-  Serial.print("signal strength (RSSI):");
-  Serial.println(rssi);
-
-  // print the encryption type:
-  byte encryption = WiFi.encryptionType();
-  Serial.print("Encryption Type:");
-  Serial.println(encryption, HEX);
-  Serial.println();
-}
-
-void printMacAddress(byte mac[]) {
-  for (int i = 0; i < 6; i++) {
-    if (i > 0) {
-      Serial.print(":");
-    }
-    if (mac[i] < 16) {
-      Serial.print("0");
-    }
-    Serial.print(mac[i], HEX);
+  if (cm0 < 10) {
+    displayMessage("A1-O");
+  } else {
+    displayMessage("A1-L");
   }
-  Serial.println();
+
+  if (cm1 < 10) {
+    displayMessage("A2-O");
+  } else {
+    displayMessage("A2-L");
+  }
+
+  if (cm2 < 10) {
+    displayMessage("A3-O");
+  } else {
+    displayMessage("A3-L");
+  }
+
+  if (cm3 < 10) {
+    displayMessage("A4-O");
+  } else {
+    displayMessage("A4-L");
+  }
+
+  delay(100);
 }
