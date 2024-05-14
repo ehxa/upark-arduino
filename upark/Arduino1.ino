@@ -4,10 +4,10 @@
 ArduinoLEDMatrix matrix;
 
 int cm0 = 0, cm1 = 0, cm2 = 0, cm3 = 0;
-const int triggerPin0 = 12, echoPin0 = 13;   
-const int triggerPin1 = 8, echoPin1 = 9;  
-const int triggerPin2 = 6, echoPin2 = 7; 
-const int triggerPin3 = 3, echoPin3 = 4; 
+const int triggerPin0 = 11, echoPin0 = 12;   
+const int triggerPin1 = 5, echoPin1 = 6;  
+const int triggerPin2 = 3, echoPin2 = 4; 
+const int triggerPin3 = 1, echoPin3 = 2; 
 
 void setup() {
   Serial.begin(9600);
@@ -48,41 +48,41 @@ void loop() {
   cm2 = 0.01715 * readUltrasonicDistance(triggerPin2, echoPin2);
   cm3 = 0.01715 * readUltrasonicDistance(triggerPin3, echoPin3);
 
-  Serial.print("Distance Sensor 0: ");
-  Serial.print(cm0);
-  Serial.println(" cm");
-  Serial.print("Distance Sensor 1: ");
-  Serial.print(cm1);
-  Serial.println(" cm");
-  Serial.print("Distance Sensor 2: ");
-  Serial.print(cm2);
-  Serial.println(" cm");
-  Serial.print("Distance Sensor 3: ");
-  Serial.print(cm3);
-  Serial.println(" cm");
+  String a1 = "A1-";
+  String a2 = "A2-";
+  String a3 = "A3-";
+  String a4 = "A4-";
 
   if (cm0 < 10) {
-    displayMessage("A1-O");
+    displayMessage((a1 + "O").c_str());
+    Serial.println(a1 + "O");
   } else {
-    displayMessage("A1-L");
+    displayMessage((a1 + "L").c_str());
+    Serial.println(a1 + "L");
   }
 
   if (cm1 < 10) {
-    displayMessage("A2-O");
+    displayMessage((a2 + "O").c_str());
+    Serial.println(a2 + "O");
   } else {
-    displayMessage("A2-L");
+    displayMessage((a2 + "L").c_str());
+    Serial.println(a2 + "L");
   }
 
   if (cm2 < 10) {
-    displayMessage("A3-O");
+    displayMessage((a3 + "O").c_str());
+    Serial.println(a3 + "O");
   } else {
-    displayMessage("A3-L");
+    displayMessage((a3 + "L").c_str());
+    Serial.println(a3 + "L");
   }
 
   if (cm3 < 10) {
-    displayMessage("A4-O");
+    displayMessage((a4 + "O").c_str());
+    Serial.println(a4 + "O");
   } else {
-    displayMessage("A4-L");
+    displayMessage((a4 + "L").c_str());
+    Serial.println(a4 + "L");
   }
 
   delay(100);
