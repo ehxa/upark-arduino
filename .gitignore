@@ -4,3 +4,8 @@ raspberry/certs.txt
 .DS_Store
 .DS_Store
 upark/.DS_Store
+raspberry/certs/AmazonRootCA1.pem
+raspberry/certs/6ffd231d3fe2899b16444ab96dc193e17c15eaaa9cb754975f1838a0585286dc-private.pem.key
+raspberry/certs/6ffd231d3fe2899b16444ab96dc193e17c15eaaa9cb754975f1838a0585286dc-certificate.pem.crt
+upark/.DS_Store
+.DS_Store
