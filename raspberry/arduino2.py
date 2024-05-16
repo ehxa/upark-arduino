@@ -1,22 +1,15 @@
 import serial
 import time
 import json
-from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTClient
+import requests
 
-filePath = "certs.txt"
-
-with open(filePath, 'r') as file:
-    lines = file.readlines()  
+with open('config.txt', 'r') as file:
+    url = file.readline().strip()
     
 
-mqttClient = AWSIoTMQTTClient(lines[0].strip())
-mqttClient.configureEndpoint(lines[1].strip(), 8883)
-mqttClient.configureCredentials(lines[2].strip(), lines[3].strip(), lines[4].strip())
-
-mqttClient.connect()
-
-arduino = serial.Serial('/dev/ttyACM0', 9600)
+arduino = serial.Serial('/dev/ttyACM0', 9601)
 time.sleep(2)  
+sensor_data = {}
 
 while True:
     if arduino.in_waiting > 0:
@@ -27,4 +20,6 @@ while True:
         }
         json_payload = json.dumps(json_data)
         print(json_payload)
-        mqttClient.publish("Arduino2", json_payload, 1)
+        response = requests.post(f"{url}/location", json=json_data)
+        print(response.json())
+        sensor_data = {}

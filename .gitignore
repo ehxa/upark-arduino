@@ -9,3 +9,6 @@ raspberry/certs/6ffd231d3fe2899b16444ab96dc193e17c15eaaa9cb754975f1838a0585286dc
 raspberry/certs/6ffd231d3fe2899b16444ab96dc193e17c15eaaa9cb754975f1838a0585286dc-certificate.pem.crt
 upark/.DS_Store
 .DS_Store
+raspberry/config.txt
+raspberry/config
+.DS_Store
